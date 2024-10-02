@@ -12,7 +12,8 @@ class PettyController extends Controller
      */
     public function index()
     {
-     return view("pettycash.create");
+        $requests = PettyCash::all();
+        return view("pettycash.create", compact("requests"));
     }
 
     /**
@@ -28,11 +29,11 @@ class PettyController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'requester_name' => 'required',
-            'amount' => 'required|numeric',
-            'reason' => 'required'
-        ]);
+        // $request->validate([
+        //     'requester_name' => 'required',
+        //     'amount' => 'required|numeric',
+        //     'reason' => 'required'
+        // ]);
 
         PettyCash::create($request->all());
 
@@ -70,6 +71,6 @@ class PettyController extends Controller
     public function destroy(string $id)
     {
         PettyCash::findOrFail($id)->delete();
-        return redirect()->route('pettycash.index')->with('success','Request deleted successfully.');
+        return redirect()->route('pettycash.index')->with('success', 'Request deleted successfully.');
     }
 }
