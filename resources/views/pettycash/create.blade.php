@@ -24,19 +24,23 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar bg-dark text-white" style="min-height: 100vh; width: 250px;">
+            <!-- Company Logo -->
+            <div class="text-center py-4">
+                <img src="path/to/your/logo.png" alt="Company Logo" class="img-fluid" style="max-width: 150px;">
+            </div>
             <h2 class="text-center">Petty Cash</h2>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#dashboard">Dashboard</a>
+                    <a class="nav-link text-white" href="{{ route('pettycash.create') }}">Dashboard</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#submit-request" data-bs-toggle="modal"
+                {{-- <li class="nav-item"> --}}
+                {{-- <a class="nav-link text-white" href="#submit-request" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">Submit Request</a>
-                </li>
-                <li class="nav-item">
+                </li> --}}
+                {{-- <li class="nav-item">
                     <a class="nav-link text-white" href="#view-requests">View Requests</a>
-                </li>
-                <li class="nav-item">
+                </li> --}}
+                {{-- <li class="nav-item">
                     <a class="nav-link text-white" href="#manage-users">Manage Users</a>
                 </li>
                 <li class="nav-item">
@@ -44,7 +48,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#logout">Logout</a>
-                </li>
+                </li> --}}
             </ul>
         </div>
 
@@ -91,12 +95,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status</label>
-                                    <select class="form-control" name="status" required>
-                                        <option value="" disabled selected>Select Status</option>
-                                        <option value="pending">Pending</option>
-                                        <option value="approved">Approved</option>
-                                        <option value="denied">Denied</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="status" readonly>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Save changes</button>
                             </form>
@@ -133,8 +132,9 @@
                                 <td>{{ $request->reason }}</td>
                                 <td>{{ $request->status }}</td>
                                 <td>
+                                    <!-- Delete form with confirmation dialog -->
                                     <form action="{{ route('pettycash.destroy', $request->id) }}" method="POST"
-                                        class="d-inline">
+                                        class="d-inline" onsubmit="return confirmDelete()">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-danger text-white p-1 btn">Delete</button>
@@ -147,6 +147,13 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript to handle delete confirmation -->
+    <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this request? This action cannot be undone.');
+        }
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

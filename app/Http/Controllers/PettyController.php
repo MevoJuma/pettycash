@@ -54,7 +54,8 @@ class PettyController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pettycash = PettyCash::findOrFail($id);
+        return view('edit-petty-cash-request', compact('pettycash'));
     }
 
     /**
@@ -72,5 +73,18 @@ class PettyController extends Controller
     {
         PettyCash::findOrFail($id)->delete();
         return redirect()->route('pettycash.index')->with('success', 'Request deleted successfully.');
+    }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:approved,denied',
+        ]);
+
+        $pettycash = PettyCash::findOrFail($id);
+        $pettycash->status = $request->input('status');
+        $pettycash->save();
+
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 }
