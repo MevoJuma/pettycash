@@ -17,7 +17,11 @@ return new class extends Migration {
             $table->text('reason');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
+            // $table->boolean('branch_manager_approval')->default(false);
+            // $table->boolean('general_manager_approval')->default(false);
+            // $table->boolean('head_of_department_approval')->default(false);
         });
+
     }
 
     /**

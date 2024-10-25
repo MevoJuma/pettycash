@@ -29,13 +29,23 @@ class PettyController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate([
-        //     'requester_name' => 'required',
-        //     'amount' => 'required|numeric',
-        //     'reason' => 'required'
-        // ]);
+        $request->validate([
+            'requester_name' => 'required',
+            'amount' => 'required|numeric',
+            'reason' => 'required',
+            'dateNeeded' => 'required|date'
+        ]);
 
-        PettyCash::create($request->all());
+        PettyCash::create([
+            'requester_name' => $request->requester_name,
+            'amount' => $request->amount,
+            'reason' => $request->reason,
+            'dateNeeded' => $request->dateNeeded,
+            'status' => 'pending', // Default status
+            'branch_manager' => false,
+            'general_manager' => false,
+            'head_of_department' => false,
+        ]);
 
         return redirect()->back()->with('success', 'Petty Cash request submitted successfully.');
     }
@@ -75,6 +85,40 @@ class PettyController extends Controller
         return redirect()->route('pettycash.index')->with('success', 'Request deleted successfully.');
     }
 
+    /**
+     * Update the approval status by various roles.
+     */
+    public function updateApproval(Request $request, $id)
+    {
+        $pettyCashRequest = PettyCash::findOrFail($id);
+
+        // Role-based approval logic
+        if ($request->user()->role == 'branch_manager') {
+            $pettyCashRequest->branch_manager_approval = true;
+        }
+
+        if ($request->user()->role == 'general_manager') {
+            $pettyCashRequest->general_manager_approval = true;
+        }
+
+        if ($request->user()->role == 'head_of_department') {
+            $pettyCashRequest->head_of_department_approval = true;
+        }
+
+        // If all roles have approved, update the status to 'approved'
+        if (
+            $pettyCashRequest->branch_manager_approval &&
+            $pettyCashRequest->general_manager_approval &&
+            $pettyCashRequest->head_of_department_approval
+        ) {
+            $pettyCashRequest->status = 'approved';
+        }
+
+        $pettyCashRequest->save();
+
+        return redirect()->back()->with('success', 'Approval updated successfully.');
+    }
+
     public function updateStatus(Request $request, string $id)
     {
         $request->validate([
@@ -87,4 +131,5 @@ class PettyController extends Controller
 
         return response()->json(['message' => 'Status updated successfully'], 200);
     }
+
 }

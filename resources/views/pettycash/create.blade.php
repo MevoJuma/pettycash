@@ -30,9 +30,9 @@
             </div>
             <h2 class="text-center">Petty Cash</h2>
             <ul class="nav flex-column">
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('pettycash.create') }}">Dashboard</a>
-                </li>
+                </li> --}}
                 {{-- <li class="nav-item"> --}}
                 {{-- <a class="nav-link text-white" href="#submit-request" data-bs-toggle="modal"
                         data-bs-target="#exampleModal">Submit Request</a>
@@ -132,6 +132,38 @@
                                 <td>{{ $request->reason }}</td>
                                 <td>{{ $request->status }}</td>
                                 <td>
+
+                                    <!-- Display Approval Buttons for authorized users -->
+                                    @can('approve-request')
+                                        {{-- Check if user has approval rights --}}
+                                        @if ($request->status == 'pending')
+                                            @if (auth()->user()->role == 'Branch Manager')
+                                                <form
+                                                    action="{{ route('pettycash.approve', ['id' => $request->id, 'role' => 'branch_manager']) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success">Approve as Branch
+                                                        Manager</button>
+                                                </form>
+                                            @elseif (auth()->user()->role == 'General Manager')
+                                                <form
+                                                    action="{{ route('pettycash.approve', ['id' => $request->id, 'role' => 'general_manager']) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-primary">Approve as General
+                                                        Manager</button>
+                                                </form>
+                                            @elseif (auth()->user()->role == 'Head of Department')
+                                                <form
+                                                    action="{{ route('pettycash.approve', ['id' => $request->id, 'role' => 'head_department']) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-info">Approve as Head of
+                                                        Department</button>
+                                                </form>
+                                            @endif
+                                        @endif
+                                    @endcan
                                     <!-- Delete form with confirmation dialog -->
                                     <form action="{{ route('pettycash.destroy', $request->id) }}" method="POST"
                                         class="d-inline" onsubmit="return confirmDelete()">

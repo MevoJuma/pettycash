@@ -14,5 +14,8 @@ class PettyCash extends Model
         "amount",
         "reason",
         "status",
+        'head_of_department_approval',
+        'branch_manager_approval',
+        'general_manager_approval',
     ];
 }

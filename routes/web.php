@@ -28,7 +28,16 @@ Route::middleware('auth')->group(function () {
 
 });
 
+Route::middleware(['role:branch_manager'])->group(function () {
+    Route::post('/pettycash/{id}/approve', [PettyController::class, 'updateApproval'])->name('pettycash.approve');
+});
+
+
 Route::resource('pettycash', PettyController::class);
+// routes/web.php
+Route::post('/pettycash/{id}/approve', [PettyController::class, 'updateApproval'])->name('pettycash.approve');
+
+
 
 
 require __DIR__ . '/auth.php';
